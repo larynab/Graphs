@@ -10,13 +10,18 @@ class Graph:
     def add_vertex(self, vertex):
         """
         Add a vertex to the graph.
-        """
-        pass  # TODO
+        """  
+        # TODO
+        self.vertices[vertex] = set()
     def add_edge(self, v1, v2):
         """
         Add a directed edge to the graph.
         """
-        pass  # TODO
+        # TODO
+        if v1 in self.vertices and v2 in self.vertices:
+            self.vertices[v1].add(v2)
+        else:
+            raise IndexError("That vertex does not exist!")
     def bft(self, starting_vertex):
         """
         Print each vertex in breadth-first order
