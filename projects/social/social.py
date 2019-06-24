@@ -1,4 +1,6 @@
-
+import random
+#Using the util from the original part 1: graph proves a vital component/resource
+from util import Queue
 
 class User:
     def __init__(self, name):
@@ -44,11 +46,24 @@ class SocialGraph:
         self.lastID = 0
         self.users = {}
         self.friendships = {}
-        # !!!! IMPLEMENT ME
-
+        
+        # create a lits of all possible friendship combinations
+        combinations = []
+        for i in range(1, numUsers + 1):
+            for j in range(1, numUsers + 1):
+                # avoid friend with self and duplicate friendships
+                if i != j and i < j:
+                    combinations.append([i, j])
+        # randomise the cominations list
+        random.shuffle(combinations)
+        # take the first numUssers * avgFriendships number of friendships // 2
+        friendship_list = combinations[:numUsers * (avgFriendships // 2)]
         # Add users
-
+        for i in range (1, numUsers + 1):
+            self.addUser(i)
         # Create friendships
+        for friendship in friendship_list:
+            self.addFriendship(friendship[0], friendship[1])
 
     def getAllSocialPaths(self, userID):
         """
@@ -59,10 +74,30 @@ class SocialGraph:
 
         The key is the friend's ID and the value is the path.
         """
-        visited = {}  # Note that this is a dictionary, not a set
-        # !!!! IMPLEMENT ME
+        # initialise an empty dictionary of visited vertices
+        visited = {}
+        # initialise a queue data structure and append userID as the first item in a list
+        q = Queue()
+        q.enqueue([userID])
+        # while the queue is not empty, keep traversing
+        while q.size():
+            # dequeue the next path and store it in a variable
+            p = q.dequeue()
+            # grab the last vertex from the path
+            v = p[len(p)  - 1]
+            # if the vertex has not already been visited, make a new dictionary key and assign it the current path
+            if v not in visited:
+                visited[v] = p
+                # for each connected vertex in the vertex's set, add a copy of the current path with it appended on the end
+                for next_vertex in self.friendships[v]:
+                    # make a copy of the current path
+                    p_copy = p[:]
+                    # append the next_vertex to the path and enqueue
+                    p_copy.append(next_vertex)
+                    q.enqueue(p_copy)
+        # return friend pathways
         return visited
-
+             
 
 if __name__ == '__main__':
     sg = SocialGraph()
@@ -70,3 +105,4 @@ if __name__ == '__main__':
     print(sg.friendships)
     connections = sg.getAllSocialPaths(1)
     print(connections)
+
